@@ -32,6 +32,11 @@ func (bot *Bot) SetConfig(cfg *Config) {
 	bot.cfg = cfg
 }
 
+// SetHandlers of the bot
+func (bot *Bot) SetHandlers(handlers []Handler) {
+	bot.handlers = handlers
+}
+
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
 	bot.sess, err = discordgo.New("Bot " + "" /*TODO: Config bot token*/)
