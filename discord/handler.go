@@ -49,7 +49,6 @@ func (he HandleError) Error() string {
 // WILL be moved out of here, meanwhile it stays here
 
 type pingPong struct {
-	lastMessage string
 }
 
 func (p pingPong) Start() {}

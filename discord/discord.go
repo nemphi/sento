@@ -10,7 +10,7 @@ import (
 
 // Bot is a sento-powered bot application
 type Bot struct {
-	sess     *discordgo.Session
+	Sess     *discordgo.Session
 	handlers []Handler
 	cfg      *Config
 }
