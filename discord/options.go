@@ -26,3 +26,18 @@ func UseConfigFile(path string) Option {
 		return nil
 	}
 }
+
+// UseHandlers sets the handlers for a bot
+func UseHandlers(handlers ...Handler) Option {
+	return func(bot *Bot) error {
+		if bot.handlers == nil {
+			bot.handlers = make(map[string]Handler)
+		}
+		for _, handler := range handlers {
+			for _, trigger := range handler.Triggers() {
+				bot.handlers[trigger] = handler
+			}
+		}
+		return nil
+	}
+}

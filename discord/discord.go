@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -11,7 +12,7 @@ import (
 // Bot is a sento-powered bot application
 type Bot struct {
 	Sess     *discordgo.Session
-	handlers []Handler
+	handlers map[string]Handler
 	cfg      *Config
 }
 
@@ -32,11 +33,6 @@ func (bot *Bot) SetConfig(cfg *Config) {
 	bot.cfg = cfg
 }
 
-// SetHandlers of the bot
-func (bot *Bot) SetHandlers(handlers []Handler) {
-	bot.handlers = handlers
-}
-
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
 	bot.Sess, err = discordgo.New("Bot " + "" /*TODO: Config bot token*/)
@@ -47,9 +43,7 @@ func (bot *Bot) Start() (err error) {
 	}
 
 	// Add handlers
-	for _, handler := range bot.handlers {
-		bot.Sess.AddHandler(handler)
-	}
+	bot.Sess.AddHandler(bot.handleCreateMessage)
 
 	return
 }
@@ -62,4 +56,25 @@ func (bot *Bot) Stop() (err error) {
 
 	err = bot.Sess.Close()
 	return
+}
+
+func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.MessageCreate) {
+	// TODO: Fetch prefix from database
+
+	// TODO: prefix check
+
+	handler, exists := bot.handlers[msg.Content]
+	if !exists {
+		// TODO: handle case
+	}
+
+	// Handle message
+	// TODO: Make async
+	handler.Handle(bot, HandleInfo{
+		AuthorID:    msg.Author.ID,
+		ChannelID:   msg.ChannelID,
+		Trigger:     msg.Content, // TODO: use trigger
+		Timestamp:   time.Now(),
+		FullMessage: msg.Message,
+	})
 }
