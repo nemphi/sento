@@ -66,9 +66,9 @@ func (p pingPong) Triggers() []string {
 
 func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
 	if info.Message == "ping" {
-		_, err = bot.sess.ChannelMessageSend(info.ChannelID, "pong!")
+		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "pong!")
 	} else if info.Message == "pong" {
-		_, err = bot.sess.ChannelMessageSend(info.ChannelID, "ping!")
+		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "ping!")
 	}
 
 	if err != nil {

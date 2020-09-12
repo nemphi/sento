@@ -39,7 +39,7 @@ func (bot *Bot) SetHandlers(handlers []Handler) {
 
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
-	bot.sess, err = discordgo.New("Bot " + "" /*TODO: Config bot token*/)
+	bot.Sess, err = discordgo.New("Bot " + "" /*TODO: Config bot token*/)
 	if err != nil {
 		// TODO: Maybe modify error message
 		// Could not connect to host/discord
@@ -48,7 +48,7 @@ func (bot *Bot) Start() (err error) {
 
 	// Add handlers
 	for _, handler := range bot.handlers {
-		bot.sess.AddHandler(handler)
+		bot.Sess.AddHandler(handler)
 	}
 
 	return
@@ -60,6 +60,6 @@ func (bot *Bot) Stop() (err error) {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-	err = bot.sess.Close()
+	err = bot.Sess.Close()
 	return
 }
