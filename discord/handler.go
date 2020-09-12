@@ -12,7 +12,7 @@ type Handler interface {
 	// Name of the handler
 	Name() string
 	// Triggers for a given handler
-	Triggers() string
+	Triggers() []string
 	// Handle the trigger instance
 	Handle(bot *Bot, info HandleInfo) error
 
