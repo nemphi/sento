@@ -35,7 +35,7 @@ func (bot *Bot) SetConfig(cfg *Config) {
 
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
-	bot.Sess, err = discordgo.New("Bot " + "" /*TODO: Config bot token*/)
+	bot.Sess, err = discordgo.New("Bot " + bot.cfg.Token)
 	if err != nil {
 		// TODO: Maybe modify error message
 		// Could not connect to host/discord
