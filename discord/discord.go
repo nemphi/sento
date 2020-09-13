@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -35,6 +36,7 @@ func (bot *Bot) SetConfig(cfg *Config) {
 
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
+	fmt.Println("Starting connection")
 	bot.Sess, err = discordgo.New("Bot " + bot.cfg.Token)
 	if err != nil {
 		// TODO: Maybe modify error message
