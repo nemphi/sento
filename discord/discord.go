@@ -1,17 +1,21 @@
 package discord
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/nemphi/sento"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 // Bot is a sento-powered bot application
 type Bot struct {
+	sento.Bot
+
 	Sess     *discordgo.Session
 	handlers map[string]Handler
 	cfg      *Config
@@ -19,7 +23,9 @@ type Bot struct {
 
 // New returns a new sento-powered discord bot
 func New(options ...Option) (bot *Bot, err error) {
-	bot = &Bot{}
+	bot = &Bot{
+		Bot: sento.New(),
+	}
 	for _, op := range options {
 		err = op(bot)
 		if err != nil {
@@ -36,7 +42,7 @@ func (bot *Bot) SetConfig(cfg *Config) {
 
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
-	fmt.Println("Starting connection")
+	bot.LogInfo("Starting connection")
 	bot.Sess, err = discordgo.New("Bot " + bot.cfg.Token)
 	if err != nil {
 		// TODO: Maybe modify error message
@@ -78,21 +84,33 @@ func (bot *Bot) Stop() (err error) {
 
 func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.MessageCreate) {
 	// TODO: Fetch prefix from database
+	prefix := ""
 
-	// TODO: prefix check
+	if prefix == "" {
+		// If there is no prefix for the server
+		// use the default
+		prefix = DefaultConfig.Prefix
+	}
 
-	handler, exists := bot.handlers[msg.Content]
+	if !strings.HasPrefix(msg.Content, prefix) {
+		// Ignore messages without prefix
+		return
+	}
+
+	// Grab the trigger
+	trigger := msg.Content[len(prefix):strings.Index(msg.Content, " ")]
+
+	handler, exists := bot.handlers[trigger]
 	if !exists {
-		// Ignore message
+		// Ignore messages with no handlers
 		return
 	}
 
 	// Handle message
-	// TODO: Make async
 	handler.Handle(bot, HandleInfo{
 		AuthorID:    msg.Author.ID,
 		ChannelID:   msg.ChannelID,
-		Trigger:     msg.Content, // TODO: use trigger
+		Trigger:     trigger,
 		Timestamp:   time.Now(),
 		FullMessage: msg.Message,
 	})
