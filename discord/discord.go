@@ -98,10 +98,14 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 	}
 
 	// Grab the trigger
-	trigger := msg.Content[len(prefix):strings.Index(msg.Content, " ")]
+	triggerEnd := strings.Index(msg.Content, " ")
+	if triggerEnd == -1 {
+		triggerEnd = len(msg.Content)
+	}
+	trigger := msg.Content[len(prefix):triggerEnd]
 
-	handler, exists := bot.handlers[trigger]
-	if !exists {
+	handler, triggerExists := bot.handlers[trigger]
+	if !triggerExists {
 		// Ignore messages with no handlers
 		return
 	}
