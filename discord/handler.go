@@ -18,9 +18,9 @@ type Handler interface {
 
 	// Start runs when the bot connection has been made
 	// and is adding all handlers
-	Start()
+	Start(bot *Bot) error
 	// Stop runs when the bot is being shut down
-	Stop()
+	Stop(bot *Bot) error
 }
 
 // HandleInfo about a single trigger instance
@@ -51,8 +51,8 @@ func (he HandleError) Error() string {
 type pingPong struct {
 }
 
-func (p pingPong) Start() {}
-func (p pingPong) Stop()  {}
+func (p pingPong) Start(_ *Bot) (err error) { return }
+func (p pingPong) Stop(_ *Bot) (err error)  { return }
 
 func (p pingPong) Name() string {
 	return "PingPong"

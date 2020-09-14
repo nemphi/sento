@@ -45,6 +45,14 @@ func (bot *Bot) Start() (err error) {
 	}
 
 	// Add handlers
+	for _, handler := range bot.handlers {
+		err = handler.Start(bot)
+		if err != nil {
+			// TODO: Maybe modify error message
+			// Error while starting handler
+			return err
+		}
+	}
 	bot.Sess.AddHandler(bot.handleCreateMessage)
 
 	return
@@ -56,6 +64,14 @@ func (bot *Bot) Stop() (err error) {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
+	for _, handler := range bot.handlers {
+		err = handler.Stop(bot)
+		if err != nil {
+			// TODO: Maybe modify error message
+			// Error while stoping handler
+			return err
+		}
+	}
 	err = bot.Sess.Close()
 	return
 }
