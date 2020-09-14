@@ -52,6 +52,7 @@ func (bot *Bot) Start() (err error) {
 	}
 
 	// Add handlers
+	bot.LogInfo("Starting all handlers")
 	for _, handler := range bot.handlers {
 		err = handler.Start(bot)
 		if err != nil {
@@ -80,6 +81,8 @@ func (bot *Bot) Stop() (err error) {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
+	bot.LogInfo("Signal received")
+	bot.LogInfo("Stopping all handlers")
 	for _, handler := range bot.handlers {
 		err = handler.Stop(bot)
 		if err != nil {
@@ -88,7 +91,12 @@ func (bot *Bot) Stop() (err error) {
 			return err
 		}
 	}
+
+	bot.LogInfo("Closing connection")
 	err = bot.Sess.Close()
+	if err == nil {
+		bot.LogInfo("Connection closed")
+	}
 	return
 }
 
