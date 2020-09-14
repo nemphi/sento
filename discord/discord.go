@@ -42,11 +42,12 @@ func (bot *Bot) SetConfig(cfg *Config) {
 
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
-	bot.LogInfo("Starting connection")
+	bot.LogInfo("Creating session")
 	bot.Sess, err = discordgo.New("Bot " + bot.cfg.Token)
 	if err != nil {
 		// TODO: Maybe modify error message
 		// Could not connect to host/discord
+		bot.LogInfo("Error creating session")
 		return err
 	}
 
@@ -61,11 +62,14 @@ func (bot *Bot) Start() (err error) {
 	}
 	bot.Sess.AddHandler(bot.handleCreateMessage)
 
+	bot.LogInfo("Opening the connection")
 	err = bot.Sess.Open()
 	if err != nil {
 		bot.LogInfo("Error opening the connection")
 		return
 	}
+
+	bot.LogInfo("Listening . . .")
 
 	return
 }
