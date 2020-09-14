@@ -83,7 +83,8 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 
 	handler, exists := bot.handlers[msg.Content]
 	if !exists {
-		// TODO: handle case
+		// Ignore message
+		return
 	}
 
 	// Handle message
