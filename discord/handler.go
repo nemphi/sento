@@ -60,14 +60,15 @@ func (p pingPong) Name() string {
 
 func (p pingPong) Triggers() []string {
 	return []string{
-		"*",
+		"ping",
+		"pong",
 	}
 }
 
 func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
-	if info.Message == "ping" {
+	if info.Trigger == "ping" {
 		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "pong!")
-	} else if info.Message == "pong" {
+	} else if info.Trigger == "pong" {
 		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "ping!")
 	}
 
