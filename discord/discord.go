@@ -61,6 +61,12 @@ func (bot *Bot) Start() (err error) {
 	}
 	bot.Sess.AddHandler(bot.handleCreateMessage)
 
+	err = bot.Sess.Open()
+	if err != nil {
+		bot.LogInfo("Error opening the connection")
+		return
+	}
+
 	return
 }
 
