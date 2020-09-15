@@ -1,8 +1,6 @@
 package discord
 
 import (
-	"time"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -14,7 +12,7 @@ type Handler interface {
 	// Triggers for a given handler
 	Triggers() []string
 	// Handle the trigger instance
-	Handle(bot *Bot, info HandleInfo) *HandleError
+	Handle(bot *Bot, info HandleInfo) error
 
 	// Start runs when the bot connection has been made
 	// and is adding all handlers
@@ -31,18 +29,6 @@ type HandleInfo struct {
 	AuthorID    string
 	Message     string
 	FullMessage *discordgo.Message
-	Timestamp   time.Time
-}
-
-// HandleError ocurred while dealing with a trigger
-type HandleError struct {
-	HandlerName   string
-	MessageID     string
-	OriginalError error
-}
-
-func (he HandleError) Error() string {
-	return "HandleError(" + he.HandlerName + ") " + he.OriginalError.Error()
 }
 
 // --------------- Just an example implementation -------------
@@ -66,21 +52,13 @@ func (p pingPong) Triggers() []string {
 	}
 }
 
-func (p pingPong) Handle(bot *Bot, info HandleInfo) (he *HandleError) {
-	var err error
+func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
 	if info.Trigger == "ping" {
 		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "pong!")
 	} else if info.Trigger == "pong" {
 		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "ping!")
 	}
 
-	if err != nil {
-		he = &HandleError{
-			HandlerName:   p.Name(),
-			MessageID:     info.FullMessage.ID,
-			OriginalError: err,
-		}
-	}
 	return
 }
 

@@ -5,7 +5,6 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/nemphi/sento"
 
@@ -129,12 +128,11 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 		ChannelID:   msg.ChannelID,
 		GuildID:     msg.GuildID,
 		Trigger:     trigger,
-		Timestamp:   time.Now(),
 		FullMessage: msg.Message,
 	})
 
 	if err != nil {
-		bot.LogInfo("Handle error",
+		bot.LogInfo("Handler error",
 			sento.FieldString("handler", handler.Name()),
 			sento.FieldString("trigger", trigger),
 			sento.FieldString("guild", msg.GuildID),
