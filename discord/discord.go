@@ -124,11 +124,23 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 	}
 
 	// Handle message
-	handler.Handle(bot, HandleInfo{
+	err := handler.Handle(bot, HandleInfo{
 		AuthorID:    msg.Author.ID,
 		ChannelID:   msg.ChannelID,
+		GuildID:     msg.GuildID,
 		Trigger:     trigger,
 		Timestamp:   time.Now(),
 		FullMessage: msg.Message,
 	})
+
+	if err != nil {
+		bot.LogInfo("Handle error",
+			sento.FieldString("handler", handler.Name()),
+			sento.FieldString("trigger", trigger),
+			sento.FieldString("guild", msg.GuildID),
+			sento.FieldString("channel", msg.ChannelID),
+			sento.FieldString("author", msg.Author.ID),
+			sento.FieldString("message", msg.ID),
+		)
+	}
 }

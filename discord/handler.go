@@ -14,7 +14,7 @@ type Handler interface {
 	// Triggers for a given handler
 	Triggers() []string
 	// Handle the trigger instance
-	Handle(bot *Bot, info HandleInfo) error
+	Handle(bot *Bot, info HandleInfo) *HandleError
 
 	// Start runs when the bot connection has been made
 	// and is adding all handlers
@@ -26,6 +26,7 @@ type Handler interface {
 // HandleInfo about a single trigger instance
 type HandleInfo struct {
 	Trigger     string
+	GuildID     string
 	ChannelID   string
 	AuthorID    string
 	Message     string
@@ -65,7 +66,8 @@ func (p pingPong) Triggers() []string {
 	}
 }
 
-func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
+func (p pingPong) Handle(bot *Bot, info HandleInfo) (he *HandleError) {
+	var err error
 	if info.Trigger == "ping" {
 		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "pong!")
 	} else if info.Trigger == "pong" {
@@ -73,7 +75,7 @@ func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
 	}
 
 	if err != nil {
-		err = HandleError{
+		he = &HandleError{
 			HandlerName:   p.Name(),
 			MessageID:     info.FullMessage.ID,
 			OriginalError: err,

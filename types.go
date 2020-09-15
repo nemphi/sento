@@ -2,7 +2,6 @@ package sento
 
 import (
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 // Bot is a sento-powered bot
@@ -13,8 +12,10 @@ type Bot struct {
 // LogField for a logger
 type LogField = zap.Field
 
-// LogFieldType is used when defining fields
-type LogFieldType = zapcore.FieldType
+// FieldString for a log entry
+func FieldString(key string, value string) LogField {
+	return zap.String(key, value)
+}
 
 // New sento-powered bot
 func New() Bot {
