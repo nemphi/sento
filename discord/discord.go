@@ -35,11 +35,6 @@ func New(options ...Option) (bot *Bot, err error) {
 	return
 }
 
-// SetConfig of a bot
-func (bot *Bot) SetConfig(cfg *Config) {
-	bot.cfg = cfg
-}
-
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
 	bot.LogInfo("Creating session")

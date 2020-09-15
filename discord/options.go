@@ -22,7 +22,15 @@ func UseConfigFile(path string) Option {
 		if _, err = toml.Decode(string(file), cfg); err != nil {
 			return err
 		}
-		bot.SetConfig(cfg)
+		bot.cfg = cfg
+		return nil
+	}
+}
+
+// UseConfig sets the config for a bot
+func UseConfig(cfg *Config) Option {
+	return func(bot *Bot) error {
+		bot.cfg = cfg
 		return nil
 	}
 }
