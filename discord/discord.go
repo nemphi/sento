@@ -131,14 +131,20 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 		FullMessage: msg.Message,
 	})
 
+	logFields := []sento.LogField{
+		sento.FieldString("handler", handler.Name()),
+		sento.FieldString("trigger", trigger),
+		sento.FieldString("guild", msg.GuildID),
+		sento.FieldString("channel", msg.ChannelID),
+		sento.FieldString("author", msg.Author.ID),
+		sento.FieldString("message", msg.ID),
+	}
+
 	if err != nil {
-		bot.LogInfo("Handler error",
-			sento.FieldString("handler", handler.Name()),
-			sento.FieldString("trigger", trigger),
-			sento.FieldString("guild", msg.GuildID),
-			sento.FieldString("channel", msg.ChannelID),
-			sento.FieldString("author", msg.Author.ID),
-			sento.FieldString("message", msg.ID),
-		)
+		// Log error
+		bot.LogError("Handler error", logFields...)
+	} else {
+		// Log every trigger
+		bot.LogInfo("Handler trigger", logFields...)
 	}
 }
