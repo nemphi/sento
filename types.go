@@ -30,3 +30,8 @@ func New() Bot {
 func (b Bot) LogInfo(msg string, fields ...LogField) {
 	b.logger.Info(msg, fields...)
 }
+
+// LogError logs an error to the console
+func (b Bot) LogError(msg string, fields ...LogField) {
+	b.logger.Error(msg, fields...)
+}
