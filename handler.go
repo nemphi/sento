@@ -33,7 +33,7 @@ type HandleInfo struct {
 
 // Message returns the discord message that originated this trigger
 func (hi HandleInfo) Message(bot *Bot) (*discordgo.Message, error) {
-	return bot.Sess.ChannelMessage(hi.ChannelID, hi.MessageID)
+	return bot.sess.ChannelMessage(hi.ChannelID, hi.MessageID)
 }
 
 // --------------- Just an example implementation -------------
