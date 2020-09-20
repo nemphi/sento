@@ -70,7 +70,7 @@ func (bot *Bot) Start() (err error) {
 	}
 	bot.sess.AddHandler(bot.handleCreateMessage)
 
-	bot.LogInfo("Listening . . .")
+	bot.LogInfo("All handlers added, listening . . .")
 	bot.EmitEvent(EventConnected, nil)
 
 	return
@@ -91,6 +91,11 @@ func (bot *Bot) Stop() (err error) {
 			// Error while stoping handler
 			return err
 		}
+	}
+
+	bot.LogInfo("Stopping all listeners")
+	for _, listener := range bot.listeners {
+		close(listener)
 	}
 
 	bot.LogInfo("Closing connection")
