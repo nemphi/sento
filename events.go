@@ -3,7 +3,14 @@ package sento
 // EventListener interface used for defining listeners
 type EventListener interface {
 	Type() EventType
-	Handle(bot *Bot, data interface{})
+	Chan() chan EventData
+	Listen(<-chan EventData)
+}
+
+// EventData for a listener
+type EventData struct {
+	Bot  *Bot
+	Data interface{}
 }
 
 // EventType indicates the supported event types
@@ -24,8 +31,6 @@ const (
 func (bot *Bot) EmitEvent(eventType EventType, data interface{}) {
 	listeners, notEmpty := bot.listeners[eventType]
 	if notEmpty {
-		for _, listener := range listeners {
-			go listener.Handle(bot, data)
-		}
+		listeners <- EventData{Bot: bot, Data: data}
 	}
 }
