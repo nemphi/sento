@@ -18,7 +18,7 @@ type OpenCloser interface {
 
 // Bot is a sento-powered bot application
 type Bot struct {
-	Sess      *discordgo.Session
+	sess      *discordgo.Session
 	handlers  map[string]Handler
 	listeners map[EventType][]EventListener
 	cfg       *Config
@@ -47,7 +47,7 @@ func New(options ...Option) (bot *Bot, err error) {
 // Start an instance of the bot
 func (bot *Bot) Start() (err error) {
 	bot.LogInfo("Creating session")
-	bot.Sess, err = discordgo.New("Bot " + bot.cfg.Token)
+	bot.sess, err = discordgo.New("Bot " + bot.cfg.Token)
 	if err != nil {
 		// TODO: Maybe modify error message
 		// Could not connect to host/discord
@@ -65,10 +65,10 @@ func (bot *Bot) Start() (err error) {
 			return err
 		}
 	}
-	bot.Sess.AddHandler(bot.handleCreateMessage)
+	bot.sess.AddHandler(bot.handleCreateMessage)
 
 	bot.LogInfo("Opening the connection")
-	err = bot.Sess.Open()
+	err = bot.sess.Open()
 	if err != nil {
 		bot.LogInfo("Error opening the connection")
 		return
@@ -98,7 +98,7 @@ func (bot *Bot) Stop() (err error) {
 	}
 
 	bot.LogInfo("Closing connection")
-	err = bot.Sess.Close()
+	err = bot.sess.Close()
 	if err == nil {
 		bot.LogInfo("Connection closed")
 	}
