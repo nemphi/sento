@@ -14,7 +14,7 @@ import (
 type Bot struct {
 	sess      *discordgo.Session
 	handlers  map[string]Handler
-	listeners map[EventType]chan EventData
+	listeners map[EventType][]chan eventData
 	cfg       *Config
 	logger    *zap.Logger
 }
@@ -29,7 +29,7 @@ func New(options ...Option) (bot *Bot, err error) {
 	}
 	bot = &Bot{
 		logger:    logger,
-		listeners: make(map[EventType]chan EventData),
+		listeners: make(map[EventType][]chan eventData),
 	}
 	for _, op := range options {
 		err = op(bot)
@@ -94,8 +94,10 @@ func (bot *Bot) Stop() (err error) {
 	}
 
 	bot.LogInfo("Stopping all listeners")
-	for _, listener := range bot.listeners {
-		close(listener)
+	for _, listeners := range bot.listeners {
+		for _, listener := range listeners {
+			close(listener)
+		}
 	}
 
 	bot.LogInfo("Closing connection")

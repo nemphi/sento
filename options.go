@@ -2,7 +2,6 @@ package sento
 
 import (
 	"io/ioutil"
-	"sync"
 
 	"github.com/BurntSushi/toml"
 )
@@ -40,16 +39,10 @@ func UseConfig(cfg *Config) Option {
 func UseListeners(listeners ...EventListener) Option {
 	return func(bot *Bot) error {
 		if bot.listeners == nil {
-			bot.listeners = make(map[EventType]chan EventData)
+			bot.listeners = make(map[EventType][]chan eventData)
 		}
 		for _, listener := range listeners {
-			listenerChan, exists := bot.listeners[listener.Type()]
-			if exists {
-				bot.listeners[listener.Type()] = merge(listenerChan, listener.Chan())
-			} else {
-				listenerChan := listener.Chan()
-				bot.listeners[listener.Type()] = listenerChan
-			}
+			bot.listeners[listener.Type()] = append(bot.listeners[listener.Type()], listener.Chan())
 		}
 		return nil
 	}
@@ -68,23 +61,4 @@ func UseHandlers(handlers ...Handler) Option {
 		}
 		return nil
 	}
-}
-
-func merge(cs ...chan EventData) chan EventData {
-	out := make(chan EventData)
-	var wg sync.WaitGroup
-	wg.Add(len(cs))
-	for _, c := range cs {
-		go func(c <-chan EventData) {
-			for v := range c {
-				out <- v
-			}
-			wg.Done()
-		}(c)
-	}
-	go func() {
-		wg.Wait()
-		close(out)
-	}()
-	return out
 }
