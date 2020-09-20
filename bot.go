@@ -27,7 +27,9 @@ type Bot struct {
 
 // New returns a new sento-powered discord bot
 func New(options ...Option) (bot *Bot, err error) {
-	logger, err := zap.NewProduction()
+	logger, err := zap.NewProduction(
+		zap.WithCaller(false),
+	)
 	if err != nil {
 		return nil, err
 	}
