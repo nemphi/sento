@@ -3,7 +3,7 @@ package sento
 // EventListener interface used for defining listeners
 type EventListener interface {
 	Type() EventType
-	Handle(data interface{})
+	Handle(bot *Bot, data interface{})
 }
 
 // EventType indicates the supported event types
