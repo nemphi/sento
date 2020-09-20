@@ -35,6 +35,19 @@ func UseConfig(cfg *Config) Option {
 	}
 }
 
+// UseListeners sets the listeners for a bot
+func UseListeners(listeners ...EventListener) Option {
+	return func(bot *Bot) error {
+		if bot.listeners == nil {
+			bot.listeners = make(map[EventType][]EventListener)
+		}
+		for _, listener := range listeners {
+			bot.listeners[listener.Type()] = append(bot.listeners[listener.Type()], listener)
+		}
+		return nil
+	}
+}
+
 // UseHandlers sets the handlers for a bot
 func UseHandlers(handlers ...Handler) Option {
 	return func(bot *Bot) error {
