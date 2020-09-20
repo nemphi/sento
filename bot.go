@@ -10,12 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// OpenCloser interface used mainly for callbacks
-type OpenCloser interface {
-	Open() error
-	Close() error
-}
-
 // Bot is a sento-powered bot application
 type Bot struct {
 	sess      *discordgo.Session
