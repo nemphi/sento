@@ -10,12 +10,19 @@ import (
 	"go.uber.org/zap"
 )
 
+// OpenCloser interface used mainly for callbacks
+type OpenCloser interface {
+	Open() error
+	Close() error
+}
+
 // Bot is a sento-powered bot application
 type Bot struct {
-	Sess     *discordgo.Session
-	handlers map[string]Handler
-	cfg      *Config
-	logger   *zap.Logger
+	Sess      *discordgo.Session
+	handlers  map[string]Handler
+	listeners map[EventType][]EventListener
+	cfg       *Config
+	logger    *zap.Logger
 }
 
 // New returns a new sento-powered discord bot
@@ -25,7 +32,8 @@ func New(options ...Option) (bot *Bot, err error) {
 		return nil, err
 	}
 	bot = &Bot{
-		logger: logger,
+		logger:    logger,
+		listeners: make(map[EventType][]EventListener),
 	}
 	for _, op := range options {
 		err = op(bot)
