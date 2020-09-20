@@ -149,12 +149,13 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 	}
 
 	// Handle message
-	err := handler.Handle(bot, HandleInfo{
+	handleInfo := HandleInfo{
 		AuthorID:  msg.Author.ID,
 		ChannelID: msg.ChannelID,
 		GuildID:   msg.GuildID,
 		Trigger:   trigger,
-	})
+	}
+	err := handler.Handle(bot, handleInfo)
 
 	// TODO: Maybe make it prettier?
 	logFields := []LogField{
@@ -173,4 +174,6 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 		// Log every trigger
 		bot.LogInfo("Handler trigger", logFields...)
 	}
+
+	bot.EmitEvent(EventMessageReceived, handleInfo)
 }
