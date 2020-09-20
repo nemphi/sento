@@ -75,12 +75,7 @@ func (bot *Bot) Start() (err error) {
 	}
 
 	bot.LogInfo("Listening . . .")
-	listeners, notEmpty := bot.listeners[EventConnected]
-	if notEmpty {
-		for _, listener := range listeners {
-			go listener.Handle(bot, nil)
-		}
-	}
+	bot.EmitEvent(EventConnected, nil)
 
 	return
 }
@@ -107,12 +102,7 @@ func (bot *Bot) Stop() (err error) {
 	if err == nil {
 		bot.LogInfo("Connection closed")
 	}
-	listeners, notEmpty := bot.listeners[EventDisconnected]
-	if notEmpty {
-		for _, listener := range listeners {
-			go listener.Handle(bot, nil)
-		}
-	}
+	bot.EmitEvent(EventDisconnected, nil)
 	return
 }
 
