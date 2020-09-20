@@ -20,6 +20,7 @@ const (
 	EventDisconnected
 )
 
+// EmitEvent and broadcast it to all listeners
 func (bot *Bot) EmitEvent(eventType EventType, data interface{}) {
 	listeners, notEmpty := bot.listeners[eventType]
 	if notEmpty {
