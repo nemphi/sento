@@ -75,6 +75,12 @@ func (bot *Bot) Start() (err error) {
 	}
 
 	bot.LogInfo("Listening . . .")
+	listeners, notEmpty := bot.listeners[EventConnected]
+	if notEmpty {
+		for _, listener := range listeners {
+			go listener.Handle(bot, nil)
+		}
+	}
 
 	return
 }
