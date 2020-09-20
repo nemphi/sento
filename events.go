@@ -19,3 +19,12 @@ const (
 	// EventDisconnected emitted when the discord session closes
 	EventDisconnected
 )
+
+func (bot *Bot) EmitEvent(eventType EventType, data interface{}) {
+	listeners, notEmpty := bot.listeners[eventType]
+	if notEmpty {
+		for _, listener := range listeners {
+			go listener.Handle(bot, data)
+		}
+	}
+}
