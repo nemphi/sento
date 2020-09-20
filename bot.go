@@ -14,7 +14,7 @@ import (
 type Bot struct {
 	sess      *discordgo.Session
 	handlers  map[string]Handler
-	listeners map[EventType][]chan eventData
+	listeners map[EventType][]chan EventData
 	cfg       *Config
 	logger    *zap.Logger
 }
@@ -29,7 +29,7 @@ func New(options ...Option) (bot *Bot, err error) {
 	}
 	bot = &Bot{
 		logger:    logger,
-		listeners: make(map[EventType][]chan eventData),
+		listeners: make(map[EventType][]chan EventData),
 	}
 	for _, op := range options {
 		err = op(bot)

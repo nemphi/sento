@@ -39,7 +39,7 @@ func UseConfig(cfg *Config) Option {
 func UseListeners(listeners ...EventListener) Option {
 	return func(bot *Bot) error {
 		if bot.listeners == nil {
-			bot.listeners = make(map[EventType][]chan eventData)
+			bot.listeners = make(map[EventType][]chan EventData)
 		}
 		for _, listener := range listeners {
 			bot.listeners[listener.Type()] = append(bot.listeners[listener.Type()], listener.Chan())
