@@ -1,4 +1,4 @@
-package discord
+package sento
 
 import (
 	"os"
@@ -6,24 +6,26 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/nemphi/sento"
-
 	"github.com/bwmarrin/discordgo"
+	"go.uber.org/zap"
 )
 
 // Bot is a sento-powered bot application
 type Bot struct {
-	sento.Bot
-
 	Sess     *discordgo.Session
 	handlers map[string]Handler
 	cfg      *Config
+	logger   *zap.Logger
 }
 
 // New returns a new sento-powered discord bot
 func New(options ...Option) (bot *Bot, err error) {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		return nil, err
+	}
 	bot = &Bot{
-		Bot: sento.New(),
+		logger: logger,
 	}
 	for _, op := range options {
 		err = op(bot)
@@ -95,6 +97,10 @@ func (bot *Bot) Stop() (err error) {
 }
 
 func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.MessageCreate) {
+	if msg.Author.ID == sess.State.User.ID {
+		return // Ignore messages sent by this bot
+	}
+
 	// TODO: Fetch prefix from database
 	prefix := ""
 
@@ -124,20 +130,20 @@ func (bot *Bot) handleCreateMessage(sess *discordgo.Session, msg *discordgo.Mess
 
 	// Handle message
 	err := handler.Handle(bot, HandleInfo{
-		AuthorID:    msg.Author.ID,
-		ChannelID:   msg.ChannelID,
-		GuildID:     msg.GuildID,
-		Trigger:     trigger,
-		FullMessage: msg.Message,
+		AuthorID:  msg.Author.ID,
+		ChannelID: msg.ChannelID,
+		GuildID:   msg.GuildID,
+		Trigger:   trigger,
 	})
 
-	logFields := []sento.LogField{
-		sento.FieldString("handler", handler.Name()),
-		sento.FieldString("trigger", trigger),
-		sento.FieldString("guild", msg.GuildID),
-		sento.FieldString("channel", msg.ChannelID),
-		sento.FieldString("author", msg.Author.ID),
-		sento.FieldString("message", msg.ID),
+	// TODO: Maybe make it prettier?
+	logFields := []LogField{
+		FieldString("handler", handler.Name()),
+		FieldString("trigger", trigger),
+		FieldString("guild", msg.GuildID),
+		FieldString("channel", msg.ChannelID),
+		FieldString("author", msg.Author.ID),
+		FieldString("message", msg.ID),
 	}
 
 	if err != nil {

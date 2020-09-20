@@ -1,4 +1,4 @@
-package discord
+package sento
 
 import (
 	"io/ioutil"

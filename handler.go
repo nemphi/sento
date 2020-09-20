@@ -1,4 +1,4 @@
-package discord
+package sento
 
 import (
 	"github.com/bwmarrin/discordgo"
@@ -23,12 +23,17 @@ type Handler interface {
 
 // HandleInfo about a single trigger instance
 type HandleInfo struct {
-	Trigger     string
-	GuildID     string
-	ChannelID   string
-	AuthorID    string
-	Message     string
-	FullMessage *discordgo.Message
+	Trigger        string
+	GuildID        string
+	ChannelID      string
+	MessageID      string
+	AuthorID       string
+	MessageContent string
+}
+
+// Message returns the discord message that originated this trigger
+func (hi HandleInfo) Message(bot *Bot) (*discordgo.Message, error) {
+	return bot.Sess.ChannelMessage(hi.ChannelID, hi.MessageID)
 }
 
 // --------------- Just an example implementation -------------
@@ -54,9 +59,9 @@ func (p pingPong) Triggers() []string {
 
 func (p pingPong) Handle(bot *Bot, info HandleInfo) (err error) {
 	if info.Trigger == "ping" {
-		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "pong!")
+		err = bot.Send(info, "pong!")
 	} else if info.Trigger == "pong" {
-		_, err = bot.Sess.ChannelMessageSend(info.ChannelID, "ping!")
+		err = bot.Send(info, "ping!")
 	}
 
 	return

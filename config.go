@@ -1,4 +1,4 @@
-package discord
+package sento
 
 // Config for a sento-powered discord bot
 type Config struct {
