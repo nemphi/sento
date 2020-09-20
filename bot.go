@@ -55,6 +55,13 @@ func (bot *Bot) Start() (err error) {
 		return err
 	}
 
+	bot.LogInfo("Opening the connection")
+	err = bot.sess.Open()
+	if err != nil {
+		bot.LogInfo("Error opening the connection")
+		return
+	}
+
 	// Add handlers
 	bot.LogInfo("Starting all handlers")
 	for _, handler := range bot.handlers {
@@ -66,13 +73,6 @@ func (bot *Bot) Start() (err error) {
 		}
 	}
 	bot.sess.AddHandler(bot.handleCreateMessage)
-
-	bot.LogInfo("Opening the connection")
-	err = bot.sess.Open()
-	if err != nil {
-		bot.LogInfo("Error opening the connection")
-		return
-	}
 
 	bot.LogInfo("Listening . . .")
 	bot.EmitEvent(EventConnected, nil)
